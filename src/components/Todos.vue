@@ -25,7 +25,6 @@
       <div class="content" >
             <b-table :data="todos" :bordered=true >
             <template slot-scope="props">
-
                 <b-table-column field="id" label="ID" width="40">{{props.row.id}}</b-table-column>
                 <b-table-column v-if="!props.row.editing" @dblclick.native="editTodo(props.row)" field="name" label="Name" width="200" :class="{completed : props.row.completed}" >{{props.row.name}}</b-table-column>
 
@@ -61,6 +60,8 @@
 
 
 <script>
+    import axios from 'axios';
+    axios.defaults.baseURL = "http://localhost:8000/api"
     const focus = {
         inserted(el) {
           el.focus()
@@ -103,6 +104,17 @@
                 ]
             }
         },
+        created() {
+            axios.get('/todos')
+                .then(response => {
+                    console.log(response)
+                    this.todos = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            console.log(this.items);
+          },
         methods: {
             addTodo() {
                 if (this.newTodo.trim().length==0) {
